@@ -1,4 +1,4 @@
-"""OpenRouter LLM 客户端"""
+"""LLM 客户端 - 兼容 OpenAI API 的任意后端 (vLLM / OpenRouter / etc.)"""
 
 from __future__ import annotations
 
@@ -8,14 +8,14 @@ from .config import AppConfig
 
 
 class LLMClient:
-    """基于 openai SDK 的 OpenRouter LLM 客户端"""
+    """基于 openai SDK 的 LLM 客户端，兼容 vLLM / OpenRouter 等 OpenAI API 后端"""
 
     def __init__(self, config: AppConfig):
         self.client = openai.AsyncOpenAI(
-            base_url=config.openrouter.base_url,
-            api_key=config.openrouter.api_key,
+            base_url=config.llm.base_url,
+            api_key=config.llm.api_key,
         )
-        self.default_model = config.openrouter.default_model
+        self.default_model = config.llm.default_model
 
     async def chat(
         self,

@@ -275,7 +275,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="批量扫描 request 目录，评估质量和任务类型",
     )
-    parser.add_argument("data_dir", type=Path, help="request 数据根目录")
+    parser.add_argument("data_dir", nargs="?", type=Path, default=None, help="request 数据根目录 (默认读取 config.yaml 中的 data_dir)")
     parser.add_argument("--output", "-o", type=Path, default=Path("results.jsonl"), help="输出文件路径")
     parser.add_argument("--config", "-c", type=str, default="config.yaml", help="配置文件路径")
     parser.add_argument("--concurrency", type=int, default=5, help="并发数")
@@ -293,11 +293,15 @@ async def main() -> None:
         format="%(asctime)s [%(levelname)s] %(message)s",
     )
 
-    if not args.data_dir.exists():
-        logger.error("数据目录不存在: %s", args.data_dir)
-        sys.exit(1)
-
     config = load_config(args.config)
+
+    # data_dir: 命令行参数 > config.yaml 中的 data_dir
+    data_dir = args.data_dir or Path(config.data_dir)
+    if not data_dir.exists():
+        logger.error("数据目录不存在: %s", data_dir)
+        sys.exit(1)
+    args.data_dir = data_dir
+
     llm = LLMClient(config)
 
     results = await scan_all(

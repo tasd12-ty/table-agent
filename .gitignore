@@ -7,5 +7,6 @@ build/
 .venv/
 .env
 output/
-data/
+data/*
+!data/.gitkeep
 *.egg

@@ -28,7 +28,7 @@ class SkillRouter:
     def __init__(self, llm: LLMClient, skill_loader: SkillLoader, config: AppConfig):
         self.llm = llm
         self.skill_loader = skill_loader
-        self.router_model = config.openrouter.router_model
+        self.router_model = config.llm.router_model
 
     def _skills_to_tools(self, skills: list[SkillMeta]) -> list[dict]:
         """将 skill 元数据转为 OpenAI function calling tools 格式"""

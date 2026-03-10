@@ -11,11 +11,11 @@ import yaml
 
 
 @dataclass
-class OpenRouterConfig:
+class LLMConfig:
     api_key: str = ""
-    base_url: str = "https://openrouter.ai/api/v1"
-    default_model: str = "google/gemini-2.0-flash-001"
-    router_model: str = "google/gemini-2.0-flash-001"
+    base_url: str = "http://localhost:8000/v1"
+    default_model: str = "Qwen/Qwen3-8B"
+    router_model: str = "Qwen/Qwen3-8B"
 
 
 @dataclass
@@ -26,10 +26,11 @@ class VideoConfig:
 
 @dataclass
 class AppConfig:
-    openrouter: OpenRouterConfig = field(default_factory=OpenRouterConfig)
+    llm: LLMConfig = field(default_factory=LLMConfig)
     video: VideoConfig = field(default_factory=VideoConfig)
     skills_dir: str = "skills/"
     output_dir: str = "output/"
+    data_dir: str = "data/"
 
 
 def _resolve_env_vars(value: str) -> str:
@@ -67,15 +68,16 @@ def load_config(config_path: str = "config.yaml") -> AppConfig:
 
     resolved = _resolve_dict(raw)
 
-    or_cfg = resolved.get("openrouter", {})
+    # 兼容旧版 "openrouter" 配置名
+    llm_cfg = resolved.get("llm") or resolved.get("openrouter", {})
     video_cfg = resolved.get("video", {})
 
     return AppConfig(
-        openrouter=OpenRouterConfig(
-            api_key=or_cfg.get("api_key", ""),
-            base_url=or_cfg.get("base_url", "https://openrouter.ai/api/v1"),
-            default_model=or_cfg.get("default_model", "google/gemini-2.0-flash-001"),
-            router_model=or_cfg.get("router_model", "google/gemini-2.0-flash-001"),
+        llm=LLMConfig(
+            api_key=llm_cfg.get("api_key", ""),
+            base_url=llm_cfg.get("base_url", "http://localhost:8000/v1"),
+            default_model=llm_cfg.get("default_model", "Qwen/Qwen3-8B"),
+            router_model=llm_cfg.get("router_model", "Qwen/Qwen3-8B"),
         ),
         video=VideoConfig(
             max_frames=video_cfg.get("max_frames", 10),
@@ -83,4 +85,5 @@ def load_config(config_path: str = "config.yaml") -> AppConfig:
         ),
         skills_dir=resolved.get("skills_dir", "skills/"),
         output_dir=resolved.get("output_dir", "output/"),
+        data_dir=resolved.get("data_dir", "data/"),
     )

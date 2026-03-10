@@ -1,8 +1,16 @@
-openrouter:
-  api_key: ${OPENROUTER_API_KEY}
-  base_url: https://openrouter.ai/api/v1
-  default_model: google/gemini-2.0-flash-001
-  router_model: google/gemini-2.0-flash-001
+# =============================================================================
+# Table Agent 配置文件
+# =============================================================================
+# 环境变量引用语法: ${ENV_VAR}
+# 本地部署 (vLLM): base_url 改为 http://localhost:8000/v1
+# 云端服务 (OpenRouter): base_url 改为 https://openrouter.ai/api/v1
+# =============================================================================
+
+llm:
+  api_key: ${LLM_API_KEY}                  # vLLM 可设为任意非空值, 如 "token-abc123"
+  base_url: http://localhost:8000/v1        # vLLM 默认地址
+  default_model: Qwen/Qwen3-8B             # 主模型 (任务执行、质量评估)
+  router_model: Qwen/Qwen3-8B              # 路由模型 (意图分类, 需支持 tool calling)
 
 video:
   max_frames: 10
@@ -10,3 +18,4 @@ video:
 
 skills_dir: skills/
 output_dir: output/
+data_dir: data/                             # request 数据目录 (scan_requests 默认扫描路径)
