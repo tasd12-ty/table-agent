@@ -78,3 +78,18 @@ class BatchResult(BaseModel):
     failed: int
     results: list[AgentResult] = Field(default_factory=list)
     errors: list[dict] = Field(default_factory=list)  # {file, error_message}
+
+
+class RequestScanResult(BaseModel):
+    """单个 request 目录的扫描评估结果"""
+
+    request_id: str
+    request_text: str  # 原始需求
+    task_type: str  # 任务类型分类
+    task_tags: list[str] = Field(default_factory=list)  # 标签
+    input_files: list[str] = Field(default_factory=list)  # 输入文件列表
+    output_files: list[str] = Field(default_factory=list)  # 输出文件列表
+    quality_score: float = 0.0  # 质量评分 0-1
+    quality_notes: str = ""  # 质量说明
+    has_code: bool = False
+    metadata: dict = Field(default_factory=dict)
