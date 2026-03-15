@@ -8,13 +8,24 @@
 
 llm:
   api_key: ${LLM_API_KEY}                  # vLLM 可设为任意非空值, 如 "token-abc123"
-  base_url: http://localhost:8000/v1        # vLLM 默认地址
-  default_model: Qwen/Qwen3-8B             # 主模型 (任务执行、质量评估)
-  router_model: Qwen/Qwen3-8B              # 路由模型 (意图分类, 需支持 tool calling)
+  base_url: https://openrouter.ai/api/v1   # OpenRouter 云端服务
+  default_model: openrouter/healer-alpha   # 主模型 (任务执行、质量评估)
+  router_model: openrouter/healer-alpha    # 路由模型 (意图分类, 需支持 tool calling)
 
 video:
   max_frames: 10
   frame_interval_sec: 2
+
+react:
+  max_rounds: 5                             # ReAct 最大循环轮次
+  code_timeout: 30                          # 代码执行超时 (秒)
+  renderer_backend: libreoffice             # 截图渲染: libreoffice | text
+
+bench:
+  data_dir: data/spreadsheetbench/all_data_912_v0.1
+  concurrency: 3
+  retry: 1
+  output_dir: output/bench/
 
 skills_dir: skills/
 output_dir: output/

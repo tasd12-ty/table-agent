@@ -25,9 +25,26 @@ class VideoConfig:
 
 
 @dataclass
+class ReactConfig:
+    max_rounds: int = 5
+    code_timeout: int = 30
+    renderer_backend: str = "libreoffice"  # "libreoffice" | "text"
+
+
+@dataclass
+class BenchConfig:
+    data_dir: str = "data/spreadsheetbench/all_data_912_v0.1"
+    concurrency: int = 3
+    retry: int = 1
+    output_dir: str = "output/bench/"
+
+
+@dataclass
 class AppConfig:
     llm: LLMConfig = field(default_factory=LLMConfig)
     video: VideoConfig = field(default_factory=VideoConfig)
+    react: ReactConfig = field(default_factory=ReactConfig)
+    bench: BenchConfig = field(default_factory=BenchConfig)
     skills_dir: str = "skills/"
     output_dir: str = "output/"
     data_dir: str = "data/"
@@ -72,6 +89,9 @@ def load_config(config_path: str = "config.yaml") -> AppConfig:
     llm_cfg = resolved.get("llm") or resolved.get("openrouter", {})
     video_cfg = resolved.get("video", {})
 
+    react_cfg = resolved.get("react", {})
+    bench_cfg = resolved.get("bench", {})
+
     return AppConfig(
         llm=LLMConfig(
             api_key=llm_cfg.get("api_key", ""),
@@ -82,6 +102,17 @@ def load_config(config_path: str = "config.yaml") -> AppConfig:
         video=VideoConfig(
             max_frames=video_cfg.get("max_frames", 10),
             frame_interval_sec=video_cfg.get("frame_interval_sec", 2.0),
+        ),
+        react=ReactConfig(
+            max_rounds=react_cfg.get("max_rounds", 5),
+            code_timeout=react_cfg.get("code_timeout", 30),
+            renderer_backend=react_cfg.get("renderer_backend", "libreoffice"),
+        ),
+        bench=BenchConfig(
+            data_dir=bench_cfg.get("data_dir", "data/spreadsheetbench/all_data_912_v0.1"),
+            concurrency=bench_cfg.get("concurrency", 3),
+            retry=bench_cfg.get("retry", 1),
+            output_dir=bench_cfg.get("output_dir", "output/bench/"),
         ),
         skills_dir=resolved.get("skills_dir", "skills/"),
         output_dir=resolved.get("output_dir", "output/"),
